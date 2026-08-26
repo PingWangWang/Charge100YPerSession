@@ -121,16 +121,17 @@ export default defineGkdApp({
         //    [修改] 填写违法信息页有 3 个「上传照片」按钮，用户点击任一个后，小程序会弹出「请拍摄侧前方」二次确认界面，
         //    需点击其中的「拍照」按钮才真正调起相机。此规则自动点击「拍照」，3 个上传照片各自弹出的二次确认界面都要点。
         //    相机内的拍照、预览「完成」、以及后续自动上传照片均交由用户手动，故不再自动点「完成」或第 2/3 张上传照片。
-        //    actionMaximum:3 覆盖至多 3 个上传照片按钮对应的二次确认界面，resetMatch:'match' 随界面出现/消失重置。
+        //    [修改] 二次确认界面为 webview 内的弹层，其「拍照」出现不触发无障碍事件，resetMatch:'match' 无法唤醒
+        //    已因 matchTime 休眠的规则。故去掉 matchTime，让规则在填写信息页内保持常驻匹配；用户点「上传照片」派发
+        //    事件后由 forcedTime 主动查询捕捉延迟渲染的「拍照」。actionMaximum:5 覆盖 3 张照片及重拍余量。
         {
           key: 112,
           name: '拍照引导-点击拍照',
           order: 112,
-          actionMaximum: 3,
+          actionMaximum: 5,
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
           forcedTime: 4000,
           actionDelay: 200,
           matches: '[text="拍照"][visibleToUser=true]',
