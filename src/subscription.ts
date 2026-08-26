@@ -5,9 +5,9 @@ import globalGroups from './globalGroups';
 
 export default defineGkdSubscription({
   id: 233300,
-  name: '西安交警-违停上报助手',
+  name: 'PingWangWang 的 GKD 订阅 🚀',
   version: 1,
-  author: 'user',
+  author: 'PingWangWang',
   checkUpdateUrl: './gkd.version.json5',
   supportUri: 'https://gkd.li/',
   categories,
