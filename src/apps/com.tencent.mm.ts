@@ -3,5 +3,129 @@ import { defineGkdApp } from '@gkd-kit/define';
 export default defineGkdApp({
   id: 'com.tencent.mm',
   name: '微信',
-  groups: [],
+  groups: [
+    {
+      key: 0,
+      name: '西安交警-违停上报',
+      desc: '手动进入「西安交警」小程序后，自动完成「交通违法随手拍 → 违停行为上报」的点击类操作；文本输入与号牌由用户手动填写。',
+      rules: [
+        // 1. 首页 -> 随手拍
+        {
+          key: 101,
+          name: '首页-点击随手拍',
+          order: 101,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="随手拍"][visibleToUser=true]',
+          action: 'click',
+        },
+        // 2. 随手拍页 -> 立即上报（页面第一个「立即上报」为交通违法行为卡片）
+        {
+          key: 102,
+          name: '随手拍页-点击立即上报',
+          order: 102,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="立即上报"][clickable=true][visibleToUser=true]',
+          action: 'click',
+        },
+        // 3. 用户须知 -> 勾选「我已阅读并同意」
+        {
+          key: 103,
+          name: '用户须知-勾选我已阅读并同意',
+          order: 103,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="我已阅读并同意"][clickable=true]',
+          action: 'click',
+        },
+        // 4. 用户须知 -> 点击「开始上报」（需先勾选）
+        {
+          key: 104,
+          name: '用户须知-点击开始上报',
+          order: 104,
+          preKeys: [103],
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="开始上报"][clickable=true]',
+          action: 'click',
+        },
+        // 5. 违法类型 -> 选择「违停行为」
+        {
+          key: 105,
+          name: '违法类型-选择违停行为',
+          order: 105,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="违停行为"][clickable=true]',
+          action: 'click',
+        },
+        // 6. 填写信息 -> 关闭「注意事项」弹窗（确认）
+        {
+          key: 106,
+          name: '填写信息-关闭弹窗(确认)',
+          order: 106,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="确认"][clickable=true]',
+          action: 'click',
+        },
+        // 7. 上报位置 -> 点击「重新选择」
+        {
+          key: 107,
+          name: '上报位置-点击重新选择',
+          order: 107,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="重新选择"][clickable=true]',
+          action: 'click',
+        },
+        // 8. 定位搜索 ->（用户手动输入「元熙樾府」后）点击第一条结果
+        //    以结果唯一文案「石家街地铁站」锚定第一条，避免点错「北门/营销中心」等
+        {
+          key: 108,
+          name: '定位搜索-点击第一条结果',
+          order: 108,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text*="石家街地铁站"][visibleToUser=true]',
+          action: 'click',
+        },
+        // 9. 定位搜索 -> 点击「完成」
+        //    ⚠️ 与相机预览的「完成」同名，需在真机按快照进一步用 activityIds / 结构区分
+        {
+          key: 109,
+          name: '定位搜索-点击完成',
+          order: 109,
+          actionMaximum: 1,
+          resetMatch: 'app',
+          matches: '[text="完成"][clickable=true]',
+          action: 'click',
+        },
+        // 10. 拍照 -> 自动点击「上传照片」（第 2/3 张；第 1 张由用户手动点）
+        //     preKeys:[111] 表示须先完成一次相机「完成」才自动拉起第 2/3 张，避免抢在用户前触发
+        {
+          key: 110,
+          name: '拍照-点击上传照片(第2/3张)',
+          order: 110,
+          preKeys: [111],
+          actionMaximum: 2,
+          resetMatch: 'app',
+          matches: '[text="上传照片"][clickable=true]',
+          action: 'click',
+        },
+        // 11. 相机预览 -> 点击「完成」
+        //     ⚠️ 需在真机确认仅在相机预览界面触发；与定位页「完成」同名，建议按 activityIds 区分
+        {
+          key: 111,
+          name: '相机预览-点击完成',
+          order: 111,
+          actionMaximum: 3,
+          resetMatch: 'app',
+          matches: '[text="完成"][clickable=true]',
+          action: 'click',
+        },
+      ],
+    },
+  ],
 });
