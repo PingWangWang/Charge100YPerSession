@@ -18,6 +18,8 @@ export default defineGkdApp({
         // 故不能用 resetMatch:'app'（仅在重进 app 时重置），否则第一步执行后规则休眠、后续步骤永不评估。
         // [修改] 网络不佳或手机卡顿会使目标节点延迟出现（如冷启动时「随手拍」较晚渲染），
         // 统一加大 matchTime/forcedTime 窗口，覆盖至约 15 秒内的加载延迟；命中后 actionMaximum:1 仍保证只执行一次。
+        // [修改] 整套规则统一限定 activityIds 为西安交警小程序容器 com.tencent.mm.plugin.appbrand.ui.AppBrandUI00，
+        // 避免在公众号等其它微信界面误触发（rule 102 结构锚定在公众号 Flutter 界面曾误点右上角头像按钮）。
         // 1. 首页 -> 随手拍
         {
           key: 101,
@@ -26,6 +28,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -48,6 +51,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -64,6 +68,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -82,6 +87,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -97,6 +103,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -114,6 +121,7 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
@@ -137,6 +145,7 @@ export default defineGkdApp({
           actionMaximum: 5,
           resetMatch: 'match',
           matchRoot: true,
+          activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           forcedTime: 12000,
           actionDelay: 200,
