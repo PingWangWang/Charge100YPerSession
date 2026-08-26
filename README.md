@@ -1,166 +1,81 @@
-# subscription-template
+# 西安交警-违停上报助手
 
-GKD 订阅模板, 此仓库方便您直接构建自己订阅, 点击右上角 [Use this template](https://github.com/new?template_name=subscription-template&template_owner=gkd-kit) 即可使用
+> 基于 [GKD 订阅模板](https://github.com/gkd-kit/subscription-template) 构建的个人 GKD 订阅，自动完成「西安交警 → 交通违法随手拍 → 违停行为上报」的**点击类**操作。文本输入与号牌信息由用户手动填写。
 
-## 配置环境
+## 说明
 
-请安装最新版 nodejs 和 pnpm 运行, 以及使用 vscode 打开项目
+本订阅面向「交通违法随手拍 → 违停行为上报」流程，自动执行可确定化的点击动作，减少重复操作。由于 GKD 订阅规则不支持文本输入（`action` 仅支持 click / back / longClick / swipe 等），凡涉及输入的内容均保留给用户手动完成。
+
+**自动完成（点击类）**：
+
+1. 首页 → 点击「随手拍」
+2. 随手拍页 → 点击「交通违法行为」的「立即上报」
+3. 用户须知 → 勾选「我已阅读并同意」→ 点击「开始上报」
+4. 违法类型 → 选择「违停行为」
+5. 填写信息 → 关闭「注意事项」弹窗（确认）
+6. 上报位置 → 点击「重新选择」→ 点击定位搜索结果第一条 → 点击「完成」
+7. 拍照辅助 → 第 1 张由用户手动拍摄；第 2/3 张自动点击「上传照片」，每张拍摄后自动点击相机预览「完成」
+
+**手动完成（输入/核对）**：
+
+- 问题描述（如「路边违停」）
+- 详细地址（如「灞桥区元熙樾府小区（绕城高速联络线）」）
+- 定位搜索关键词（如「元熙樾府」）
+- 号牌类型（蓝=小型汽车 / 绿=新能源汽车）与车牌号牌
+- 点击「提交」
+
+## 环境要求
+
+- Node.js、pnpm（构建用）；GKD ≥ v1.12.0（滑动/自动化工作模式依赖）。
+- 已授予 GKD 无障碍权限，并在 GKD 中启用微信（`com.tencent.mm`）规则。
+- 手机开启 GPS（定位上报）。
+
+## 订阅 / 使用
+
+1. 构建订阅后，将 `dist/gkd.json5` 作为订阅添加到 GKD（或通过 `build_release.yml` 发布的订阅链接）。
+2. 在 GKD「订阅 → 应用规则 → 微信」下启用「西安交警-违停上报」规则组。
+3. 手动打开微信小程序「西安交警」，自动化即开始执行。
 
 > [!IMPORTANT]
-> 选择器需要使用 nodejs@22 的 WasmGc 来校验 Java/Kotlin 正则表达式, 确保使用 nodejs>=22
+> 建议**只启用本订阅相关规则**，不要无脑开启过多规则，否则可能造成规则阻塞、触发缓慢。
 
-- nodejs>=**22** <https://nodejs.org/en/download>
-- pnpm>=9 <https://pnpm.io/zh/installation>
-- vscode <https://code.visualstudio.com>
-
-安装好后使用模板, 假设您刚刚使用 `Use this template` 创建的仓库是 `https://github.com/username/subscription`
-
-接下来下载并初始化环境
+## 构建
 
 ```shell
-git clone https://github.com/username/subscription
-cd subscription
-pnpm install
+pnpm install                 # 安装依赖（可用 --registry=https://registry.npmmirror.com 加速）
+pnpm run check               # 类型检查 + 订阅结构校验
+pnpm run build               # 生成 dist/gkd.json5 等构建产物
 ```
 
-如果因为网络问题安装失败, 将上面的 `pnpm install` 换成下面命令使用 阿里镜像源 重新安装即可
+构建后的订阅地址示例：
 
-```sh
-pnpm install --registry=https://registry.npmmirror.com
+```txt
+https://raw.githubusercontent.com/<username>/<repo>/main/dist/gkd.json5
 ```
 
-![image](https://e.gkd.li/33bb6379-2fae-4139-abc3-6250a287ad84)
+大陆访问较慢时可替换为 jsDelivr：
 
-至此环境已在 `subscription` 目录下初始化完毕, 使用 vscode 打开目录即可开始开发
-
-接下来下面所有的示例链接都基于 `username/subscription`, 请自行替换后打开
-
-`pnpm install` 用于安装依赖, 如果您的 [./package.json](./package.json) 发生变化, 则需要再次运行 `pnpm install`
-
----
-
-如果您无法初始化 nodejs 环境, 那可以直接使用 github 网页编辑文件后在线提交, 点击下面链接即可在线编辑
-
-<https://github.com/username/subscription/edit/main/src/subscription.ts>
-
-![image](https://e.gkd.li/bb539a50-cbdb-4fec-8a93-4a9c5d067de0)
+```txt
+https://fastly.jsdelivr.net/gh/<username>/<repo>@main/dist/gkd.json5
+```
 
 ## 目录结构
 
-- 订阅详情 [./src/subscription.ts](./src/subscription.ts)
-- 全局规则 [./src/globalGroups.ts](./src/globalGroups.ts)
-- 规则分类 [./src/categories.ts](./src/categories.ts)
-- 应用规则 [./src/apps](./src/apps/)
-
-在 vscode 内使用鼠标悬浮在任意字段上即可查看注释说明, 也可在 <https://gkd.li/api> 搜索查看
-
-![image](https://e.gkd.li/3b3c8b14-f7f4-46ee-90dc-b69b9233f993)
-
-现在您可编辑 [./src](./src/) 下的文件来自定义您的订阅, 构建后的订阅文件处于 [./dist](./dist/) 目录下
-
-另外您必须修改 订阅详情 [./src/subscription.ts](./src/subscription.ts) 下的 id 字段, 否则可能会和其它订阅冲突, 填一个较大的随机数字即可
-
-可以在 github 查找下方代码块 ([快捷链接](https://github.com/search?q=export+default+defineGkdSubscription%28%7B+++id%3A+&type=code)), 查看您的订阅id是否跟已有项目重复
-
-```ts
-export default defineGkdSubscription({
-  id:
+```text
+src/
+├─ apps/com.tencent.mm.ts    # 微信（西安交警）规则，本订阅的核心
+├─ subscription.ts         # 订阅元信息（id/name/version/author）
+├─ globalGroups.ts         # 全局规则（本订阅未使用）
+└─ categories.ts           # 规则分类（本订阅未使用）
+dist/                      # 构建产物（勿手动修改）
 ```
 
-## 格式修复
+## 注意事项
 
-我们使用 [prettier](https://github.com/prettier/prettier) 来格式化代码 和 [eslint](https://github.com/eslint/eslint) 来检测并修复代码错误
+- 违停举报受理时间为 **7:00~22:00**；需在 **5 分钟内**完成资料提交，超时需重新进入。
+- 微信小程序 webview 内容为动态渲染，匹配可能不稳定；落地建议结合 GKD「快照审查」微调选择器，必要时使用 `matchDelay`。
+- 本订阅仅供个人学习、个人使用。
 
-同时使用 [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks) 在您提交代码时运行格式化和代码检测修复脚本
+## 开发 / 反馈
 
-当您的代码存在错误时, 它会阻止您提交代码并输出具体错误以供您手动修复后再次提交
-
-当提交代码到仓库时, 我们也需要使用 github actions 来帮助自动格式化并修复代码, 因此您需要开启仓库的此项权限
-
-打开 <https://github.com/username/subscription/settings/actions>
-
-然后找到 Workflow permissions 点击 Read and write permissions 然后点击下方的 Save 即可
-
-![image](https://e.gkd.li/89dd8c22-f3f0-4331-a3d1-03d466dcc3d6)
-
-## 构建订阅
-
-我们需要将 [./src](./src/) 分散的文件合并为一个 gkd.json5 的最终订阅文件并输出到 [./dist](./dist/) 目录下
-
-推荐使用 github actions 进行构建, 在 [./.github/workflows](./.github/workflows) 下有 3 个工作流
-
-我们使用其中的 `build_release.yml` 构建并发布
-
-打开 <https://github.com/username/subscription/actions/workflows/build_release.yml>
-
-然后点击右侧的 `Run workflow` 即可运行并发布
-
-![image](https://e.gkd.li/ab202786-d56d-4dba-a5ee-03190aafb6e6)
-
-构建后订阅将输出到 dist 目录下, gkd.json 的文件订阅地址如下, 复制后到 GKD 添加即可
-
-```txt
-https://raw.githubusercontent.com/username/subscription/main/dist/gkd.json5
-```
-
-## 镜像加速
-
-raw.githubusercontent.com 在大陆的访问常常无法访问
-
-您可以换成 <https://fastly.jsdelivr.net/gh/username/subscription@main/dist/gkd.json5> 加速访问
-
-如果无法访问 raw.githubusercontent.com 和 fastly.jsdelivr.net
-
-请自行解决网络问题
-
-## 自定义配置文件
-
-注意: **大多数情况下, 你不需要自定义, 使用默认配置时, 下面此节教程无需了解**
-
-你可以在 [./package.json](./package.json) 下添加 gkd 属性配置自定义构建选项
-
-```json
-{
-  "gkd": {
-    "outDir": "dist",
-    "file": "gkd.json5",
-    "versionFile": "gkd.version.json5",
-    "changelog": "CHANGELOG.md",
-    "README.md": "README.md"
-  }
-}
-```
-
-这个 gkd 属性的类型如下
-
-```ts
-/**
- * @default package.json.gkd
- */
-type GkdConfig = {
-  /**
-   * @default 'dist'
-   */
-  outDir?: string;
-  /**
-   * @default 'gkd.json5'
-   */
-  file?: string;
-  /**
-   * @default 'gkd.version.json5'
-   */
-  versionFile?: string;
-  /**
-   * @default 'CHANGELOG.md'
-   */
-  changelog?: string;
-  /**
-   * @default 'README.md'
-   */
-  readme?: string;
-};
-```
-
-如果不想写配置文件, 也可以将这个参数直接传递给 `@gkd-kit/tools` 的 `updateDist` 函数
-
-手动传递参数的时候, 你必须显式将路径(非文件名)参数传递给 [./.github/workflows/build_release.yml](./.github/workflows/build_release.yml) 下的 `updatePkgVersion` 和 `stdoutGkdVersion` 函数
+规则开发可参考 [GKD 订阅规则](https://gkd.li/guide/subscription) 与 [高级选择器](https://gkd.li/guide/selector) 文档。如需调整规则，编辑 `src/apps/com.tencent.mm.ts` 后运行 `pnpm run check` 与 `pnpm run build`。
