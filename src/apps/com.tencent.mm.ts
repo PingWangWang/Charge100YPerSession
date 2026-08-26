@@ -13,14 +13,16 @@ export default defineGkdApp({
       rules: [
         // 说明：微信小程序为 webview，页面切换不一定触发无障碍事件，故给后续规则加
         // matchTime/forcedTime 主动轮询窗口，并加 matchDelay/actionDelay 提升点击稳定性。
-        // 每条规则以 actionMaximum:1 + resetMatch:'app' 在本微信会话内只执行一次即休眠，可规避跳页后旧 webview 节点残留导致的重复触发。
+        // 每条规则以 actionMaximum:1 + resetMatch:'match' 保证只在目标界面出现时重置并执行一次，
+        // 规避跳页后旧 webview 节点残留导致的重复触发；微信小程序同 Activity 内跳页不触发无障碍事件，
+        // 故不能用 resetMatch:'app'（仅在重进 app 时重置），否则第一步执行后规则休眠、后续步骤永不评估。
         // 1. 首页 -> 随手拍
         {
           key: 101,
           name: '首页-点击随手拍',
           order: 101,
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matches: '[text="随手拍"][visibleToUser=true]',
           action: 'click',
@@ -33,7 +35,7 @@ export default defineGkdApp({
           name: '随手拍页-点击立即上报',
           order: 102,
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -49,7 +51,7 @@ export default defineGkdApp({
           name: '用户须知-勾选我已阅读并同意',
           order: 103,
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -65,7 +67,7 @@ export default defineGkdApp({
           order: 104,
           preKeys: [103],
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -80,7 +82,7 @@ export default defineGkdApp({
           name: '违法类型-选择违停行为',
           order: 105,
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -95,7 +97,7 @@ export default defineGkdApp({
           name: '填写信息-关闭弹窗(确认)',
           order: 106,
           actionMaximum: 1,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -114,7 +116,7 @@ export default defineGkdApp({
           order: 110,
           preKeys: [111],
           actionMaximum: 2,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
@@ -130,7 +132,7 @@ export default defineGkdApp({
           name: '相机预览-点击完成',
           order: 111,
           actionMaximum: 3,
-          resetMatch: 'app',
+          resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
           matchTime: 6000,
