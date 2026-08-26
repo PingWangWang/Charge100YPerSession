@@ -16,6 +16,8 @@ export default defineGkdApp({
         // 每条规则以 actionMaximum:1 + resetMatch:'match' 保证只在目标界面出现时重置并执行一次，
         // 规避跳页后旧 webview 节点残留导致的重复触发；微信小程序同 Activity 内跳页不触发无障碍事件，
         // 故不能用 resetMatch:'app'（仅在重进 app 时重置），否则第一步执行后规则休眠、后续步骤永不评估。
+        // [修改] 网络不佳或手机卡顿会使目标节点延迟出现（如冷启动时「随手拍」较晚渲染），
+        // 统一加大 matchTime/forcedTime 窗口，覆盖至约 15 秒内的加载延迟；命中后 actionMaximum:1 仍保证只执行一次。
         // 1. 首页 -> 随手拍
         {
           key: 101,
@@ -24,6 +26,10 @@ export default defineGkdApp({
           actionMaximum: 1,
           resetMatch: 'match',
           matchRoot: true,
+          matchDelay: 300,
+          matchTime: 15000,
+          forcedTime: 12000,
+          actionDelay: 200,
           matches: '[text="随手拍"][visibleToUser=true]',
           action: 'click',
         },
@@ -43,8 +49,8 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
+          matchTime: 15000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches:
             'Button[text!=""][clickable=true][visibleToUser=true] + @Button[clickable=true][visibleToUser=true]',
@@ -59,8 +65,8 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
+          matchTime: 15000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches: '[text="我已阅读并同意"][visibleToUser=true]',
           action: 'click',
@@ -77,8 +83,8 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
+          matchTime: 15000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches: '[text="开始上报"][visibleToUser=true]',
           action: 'clickCenter',
@@ -92,8 +98,8 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
+          matchTime: 15000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches: '[text="违停行为"][visibleToUser=true]',
           action: 'click',
@@ -109,8 +115,8 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
+          matchTime: 15000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches: '[text="确认"][visibleToUser=true]',
           action: 'clickCenter',
@@ -132,7 +138,7 @@ export default defineGkdApp({
           resetMatch: 'match',
           matchRoot: true,
           matchDelay: 300,
-          forcedTime: 4000,
+          forcedTime: 12000,
           actionDelay: 200,
           matches: '[text="拍照"][visibleToUser=true]',
           action: 'clickCenter',
