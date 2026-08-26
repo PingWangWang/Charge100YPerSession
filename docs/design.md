@@ -175,7 +175,7 @@
 | 0 环境 | 安装依赖（`pnpm install`），GKD 升级到 ≥ v1.12.0，仓库开启 actions 写权限 | 可运行环境 | `pnpm run check` 通过 |
 | 1 规则编写 | 按 group 逐组落地规则（首页→拍→须知→类型→填写） | `src/apps/com.tencent.mm.ts` 等 | `pnpm run check` 通过 |
 | 2 真机调参 | 验证 webview 匹配、滚动、时序、拍照辅助 | 调好的规则 | 完整流程跑通 |
-| 3 构建发布 | `pnpm run build` 生成 `dist/`；用 `build_release.yml` 发布 | `dist/gkd.json5` | 订阅可加载 |
+| 3 构建 | `pnpm run build` 生成 `dist/` | `dist/gkd.json5` | 订阅可加载 |
 | 4 迭代完善 | 针对异常场景补充规则 | 修订版 | 回归通过 |
 
 ---
@@ -208,7 +208,7 @@
 ### 8.4 回归与灰度
 
 - 每次改动后执行 `pnpm run check`、`pnpm run build`。
-- 先在本地订阅小范围验证，确认稳定后再用 `build_release.yml` 发布。
+- 先在本地订阅小范围验证，确认稳定后**手动提交**，或自行托管构建产物 `dist/`。
 
 ---
 

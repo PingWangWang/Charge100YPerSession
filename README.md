@@ -1,6 +1,6 @@
 # 西安交警-违停上报助手
 
-> 基于 [GKD 订阅模板](https://github.com/gkd-kit/subscription-template) 构建的个人 GKD 订阅，自动完成「西安交警 → 交通违法随手拍 → 违停行为上报」的**点击类**操作。文本输入与号牌信息由用户手动填写。
+> 面向微信小程序「西安交警」的个人 GKD 订阅，自动完成「交通违法随手拍 → 违停行为上报」的**点击类**操作。文本输入与号牌信息由用户手动填写。
 
 ## 说明
 
@@ -32,7 +32,7 @@
 
 ## 订阅 / 使用
 
-1. 构建订阅后，将 `dist/gkd.json5` 作为订阅添加到 GKD（或通过 `build_release.yml` 发布的订阅链接）。
+1. 构建订阅后（`pnpm run build`），将 `dist/gkd.json5` 作为订阅添加到 GKD（或自行托管 `dist/` 后使用其链接）。
 2. 在 GKD「订阅 → 应用规则 → 微信」下启用「西安交警-违停上报」规则组。
 3. 手动打开微信小程序「西安交警」，自动化即开始执行。
 
@@ -46,6 +46,9 @@ pnpm install                 # 安装依赖（可用 --registry=https://registry
 pnpm run check               # 类型检查 + 订阅结构校验
 pnpm run build               # 生成 dist/gkd.json5 等构建产物
 ```
+
+> [!TIP]
+> 本仓库不设置任何自动提交。请先 `pnpm run check`、`pnpm run build`，确认无误后再**手动**提交改动。
 
 构建后的订阅地址示例：
 
