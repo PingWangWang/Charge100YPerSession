@@ -29,7 +29,10 @@ export default defineGkdApp({
         },
         // 2. 随手拍页 -> 点击「交通违法行为」卡片
         //    [修改] 该卡片文字「交通违法行为/立即上报」是无障碍树中的图片渲染，不含 text 节点。
-        //    故以唯一可见的「王平」用户卡片为锚，取其紧邻的后置兄弟可点击 Button（即交通违法卡片），实现结构锚定。
+        //    故以唯一可见的带文本用户卡片为锚，取其紧邻的后置兄弟可点击 Button（即交通违法卡片），实现结构锚定。
+        //    [修改] 锚点不再绑定「王平 17795905083」等真实姓名，改为「有文本的用户卡片」这一通用条件：
+        //    `Button[text!=""]` 只命中随手拍主页里唯一带文本且可点击的 Button，与账号姓名解耦，换账号仍有效；
+        //    且「用户卡片与其后置兄弟」的结构关系只依赖布局，不依赖具体姓名与绝对像素，故未来换机型仍能命中。
         //    [修改] 用 clickCenter 而非 click：小程序 webview 对合成可点击节点不响应无障碍 ACTION_CLICK，
         //    但响应坐标模拟触摸；配合 Shizuku 可强制模拟点击，绕过小程序的无障碍防御。
         {
@@ -44,7 +47,7 @@ export default defineGkdApp({
           forcedTime: 4000,
           actionDelay: 200,
           matches:
-            'Button[text="王平 17795905083"][clickable=true] + @Button[clickable=true][visibleToUser=true]',
+            'Button[text!=""][clickable=true][visibleToUser=true] + @Button[clickable=true][visibleToUser=true]',
           action: 'clickCenter',
         },
         // 3. 用户须知 -> 勾选「我已阅读并同意」
@@ -96,6 +99,8 @@ export default defineGkdApp({
           action: 'click',
         },
         // 6. 填写信息 -> 关闭「注意事项」弹窗（确认）
+        //    [修改] 「确认」为 webview 合成的 clickable Button，与「开始上报」「交通违法卡片」同类，
+        //    用 click（无障碍 ACTION_CLICK）点它无效，改用 clickCenter（坐标模拟触摸）才能关闭弹窗。
         {
           key: 106,
           name: '填写信息-关闭弹窗(确认)',
@@ -108,7 +113,7 @@ export default defineGkdApp({
           forcedTime: 4000,
           actionDelay: 200,
           matches: '[text="确认"][visibleToUser=true]',
-          action: 'click',
+          action: 'clickCenter',
         },
         // 7. 定位选点（重新选择→搜索→选第一条→完成）已按方案 A 交由用户手动，此处不再自动，
         //    原因：搜索词为文本输入、结果 text 动态，且定位「完成」与相机「完成」同名易误触。
