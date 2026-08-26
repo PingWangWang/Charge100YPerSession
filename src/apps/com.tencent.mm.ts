@@ -117,49 +117,11 @@ export default defineGkdApp({
         },
         // 7. 定位选点（重新选择→搜索→选第一条→完成）已按方案 A 交由用户手动，此处不再自动，
         //    原因：搜索词为文本输入、结果 text 动态，且定位「完成」与相机「完成」同名易误触。
-        // 8. 拍照 -> 自动点击「上传照片」（第 2/3 张；第 1 张由用户手动点）
-        //    [修改] 无障碍树中「上传照片」为 clickable=false 的 TextView，click（无障碍点击）无效，
-        //    改用 clickCenter（坐标模拟触摸）命中其所在卡片区域。选择器命中 DFS 遍历中「最靠前的未上传槽位」：
-        //    第 1 张上传完成后该槽位「上传照片」文本消失，匹配自动前移，从而先第 2 张再第 3 张。
-        //    preKeys:[111] 表示须先完成一次相机「完成」才自动拉起第 2/3 张，避免抢在用户手动第 1 张前触发。
-        {
-          key: 110,
-          name: '拍照-点击上传照片(第2/3张)',
-          order: 110,
-          preKeys: [111],
-          actionMaximum: 2,
-          resetMatch: 'match',
-          matchRoot: true,
-          matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
-          actionDelay: 200,
-          matches: '[text="上传照片"][visibleToUser=true]',
-          action: 'clickCenter',
-        },
-        // 9. 相机预览 -> 点击「完成」
-        //    [修改] 经快照确认相机为微信内置 MMRecordUI（activityId com.tencent.mm.plugin.recordvideo.activity.MMRecordUI，
-        //    仍在微信进程内），「完成」为原生 android.widget.Button、text="完成"、clickable=true、位于右下角。
-        //    故 matches 用精确 text="完成"（去掉 desc 以免误触其它「完成」），action 用 clickCenter 坐标触摸确保可靠。
-        //    此规则无 preKeys 依赖 rule 111，拍照辅助链路卡点在此：须先触发它，后续 rule 110 的 preKeys 才满足。
-        {
-          key: 111,
-          name: '相机预览-点击完成',
-          order: 111,
-          actionMaximum: 3,
-          resetMatch: 'match',
-          matchRoot: true,
-          matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
-          actionDelay: 200,
-          matches: '[text="完成"][visibleToUser=true]',
-          action: 'clickCenter',
-        },
-        // 10. 拍照引导 -> 点击「拍照」
-        //    [新增] 点「上传照片」后，小程序先弹出「请拍摄侧前方」引导页，需一个「拍照」按钮才真正调起相机。
-        //    此规则匹配「拍照」并点击进入相机；不设 preKeys（第 1 张由用户手动点上传播照片，此时规则 110 未执行，
-        //    故必须直接由本规则接管），actionMaximum:3 覆盖至多 3 张照片的引导。
+        // 8. 拍照引导 -> 点击「拍照」
+        //    [修改] 填写违法信息页有 3 个「上传照片」按钮，用户点击任一个后，小程序会弹出「请拍摄侧前方」二次确认界面，
+        //    需点击其中的「拍照」按钮才真正调起相机。此规则自动点击「拍照」，3 个上传照片各自弹出的二次确认界面都要点。
+        //    相机内的拍照、预览「完成」、以及后续自动上传照片均交由用户手动，故不再自动点「完成」或第 2/3 张上传照片。
+        //    actionMaximum:3 覆盖至多 3 个上传照片按钮对应的二次确认界面，resetMatch:'match' 随界面出现/消失重置。
         {
           key: 112,
           name: '拍照引导-点击拍照',
