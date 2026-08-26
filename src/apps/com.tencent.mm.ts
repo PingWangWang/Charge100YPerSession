@@ -30,6 +30,8 @@ export default defineGkdApp({
         // 2. 随手拍页 -> 点击「交通违法行为」卡片
         //    [修改] 该卡片文字「交通违法行为/立即上报」是无障碍树中的图片渲染，不含 text 节点。
         //    故以唯一可见的「王平」用户卡片为锚，取其紧邻的后置兄弟可点击 Button（即交通违法卡片），实现结构锚定。
+        //    [修改] 用 clickCenter 而非 click：小程序 webview 对合成可点击节点不响应无障碍 ACTION_CLICK，
+        //    但响应坐标模拟触摸；配合 Shizuku 可强制模拟点击，绕过小程序的无障碍防御。
         {
           key: 102,
           name: '随手拍页-点击立即上报',
@@ -43,7 +45,7 @@ export default defineGkdApp({
           actionDelay: 200,
           matches:
             'Button[text="王平 17795905083"][clickable=true] + @Button[clickable=true][visibleToUser=true]',
-          action: 'click',
+          action: 'clickCenter',
         },
         // 3. 用户须知 -> 勾选「我已阅读并同意」
         {
