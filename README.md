@@ -32,7 +32,20 @@
 
 ## 订阅 / 使用
 
-1. 构建订阅后（`pnpm run build`），将 `dist/gkd.json5` 作为订阅添加到 GKD（或自行托管 `dist/` 后使用其链接）。
+### 在线订阅
+
+复制以下任意一个链接到 GKD 即可在线订阅：
+
+- GitHub 源：`https://raw.githubusercontent.com/PingWangWang/Charge100YPerSession/main/dist/gkd.json5`
+- jsDelivr 加速（大陆推荐）：`https://fastly.jsdelivr.net/gh/PingWangWang/Charge100YPerSession@main/dist/gkd.json5`
+- npmmirror 源（需先发布到 npm）：`https://registry.npmmirror.com/xi-an-traffic-violation-subscription/latest/files/dist/gkd.json5`
+
+> [!IMPORTANT]
+> GitHub / jsDelivr 源需要在把最新的 `dist/gkd.json5` **提交并推送到 `main` 分支**后才可访问；npmmirror 源需先在本地执行 `pnpm publish` 发布到 npm 后才生效（本仓库已配置 `publishConfig`，但尚未发布）。
+
+### 本地添加
+
+1. 构建订阅后（`pnpm run build`），在 GKD 中直接添加本地文件 `dist/gkd.json5`。
 2. 在 GKD「订阅 → 应用规则 → 微信」下启用「西安交警-违停上报」规则组。
 3. 手动打开微信小程序「西安交警」，自动化即开始执行。
 
@@ -50,17 +63,7 @@ pnpm run build               # 生成 dist/gkd.json5 等构建产物
 > [!TIP]
 > 本仓库不设置任何自动提交。请先 `pnpm run check`、`pnpm run build`，确认无误后再**手动**提交改动。
 
-构建后的订阅地址示例：
-
-```txt
-https://raw.githubusercontent.com/<username>/<repo>/main/dist/gkd.json5
-```
-
-大陆访问较慢时可替换为 jsDelivr：
-
-```txt
-https://fastly.jsdelivr.net/gh/<username>/<repo>@main/dist/gkd.json5
-```
+构建后的订阅文件为 `dist/gkd.json5`，可提交到 `main` 后通过上面的「在线订阅」地址使用，或直接本地添加。
 
 ## 目录结构
 
