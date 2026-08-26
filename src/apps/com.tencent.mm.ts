@@ -22,7 +22,7 @@ export default defineGkdApp({
           matches: '[text="随手拍"][visibleToUser=true]',
           action: 'click',
         },
-        // 2. 随手拍页 -> 立即上报（页面第一个「立即上报」为交通违法行为卡片）
+        // 2. 随手拍页 -> 点击「交通违法行为」卡片（标题唯一，点标题即触发该卡片进入下一步）
         {
           key: 102,
           name: '随手拍页-点击立即上报',
@@ -34,7 +34,7 @@ export default defineGkdApp({
           matchTime: 6000,
           forcedTime: 4000,
           actionDelay: 200,
-          matches: '[text*="立即上报"][visibleToUser=true]',
+          matches: '[text="交通违法行为"][visibleToUser=true]',
           action: 'click',
         },
         // 3. 用户须知 -> 勾选「我已阅读并同意」
