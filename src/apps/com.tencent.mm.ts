@@ -63,6 +63,8 @@ export default defineGkdApp({
           action: 'click',
         },
         // 4. 用户须知 -> 点击「开始上报」（需先勾选）
+        //    [修改] 「开始上报」为 webview 合成的 clickable Button，与交通违法卡片同类，
+        //    用 clickCenter（坐标模拟触摸）而非 click，否则勾选后点它不触发跳转。
         {
           key: 104,
           name: '用户须知-点击开始上报',
@@ -76,7 +78,7 @@ export default defineGkdApp({
           forcedTime: 4000,
           actionDelay: 200,
           matches: '[text="开始上报"][visibleToUser=true]',
-          action: 'click',
+          action: 'clickCenter',
         },
         // 5. 违法类型 -> 选择「违停行为」
         {
