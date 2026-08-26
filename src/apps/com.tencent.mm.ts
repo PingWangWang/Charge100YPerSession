@@ -7,10 +7,13 @@ export default defineGkdApp({
     {
       key: 0,
       name: '西安交警-违停上报',
-      desc: '手动进入「西安交警」小程序后，自动完成「交通违法随手拍 → 违停行为上报」的点击类操作；文本输入与号牌由用户手动填写。',
+      // 方案 A：GKD 只做确定性的点击类操作；文本输入（问题描述/详细地址/定位搜索词）与号牌、最终提交均由用户手动。
+      // 定位选点（重新选择→搜索→选第一条→完成）因搜索词为文本输入、结果 text 动态且与相机「完成」同名，一并交由用户。
+      desc: '手动进入「西安交警」小程序后，自动完成「交通违法随手拍 → 违停行为上报」中可确定化的点击操作；文本输入、定位选点、号牌与最终提交由用户手动。',
       rules: [
         // 说明：微信小程序为 webview，页面切换不一定触发无障碍事件，故给后续规则加
         // matchTime/forcedTime 主动轮询窗口，并加 matchDelay/actionDelay 提升点击稳定性。
+        // 每条规则以 actionMaximum:1 + resetMatch:'app' 在本微信会话内只执行一次即休眠，可规避跳页后旧 webview 节点残留导致的重复触发。
         // 1. 首页 -> 随手拍
         {
           key: 101,
@@ -22,7 +25,9 @@ export default defineGkdApp({
           matches: '[text="随手拍"][visibleToUser=true]',
           action: 'click',
         },
-        // 2. 随手拍页 -> 点击「交通违法行为」卡片（标题唯一，点标题即触发该卡片进入下一步）
+        // 2. 随手拍页 -> 点击「交通违法行为」卡片
+        //    [修改] 该卡片文字「交通违法行为/立即上报」是无障碍树中的图片渲染，不含 text 节点。
+        //    故以唯一可见的「王平」用户卡片为锚，取其紧邻的后置兄弟可点击 Button（即交通违法卡片），实现结构锚定。
         {
           key: 102,
           name: '随手拍页-点击立即上报',
@@ -34,7 +39,8 @@ export default defineGkdApp({
           matchTime: 6000,
           forcedTime: 4000,
           actionDelay: 200,
-          matches: '[text="交通违法行为"][visibleToUser=true]',
+          matches:
+            'Button[text="王平 17795905083"][clickable=true] + @Button[clickable=true][visibleToUser=true]',
           action: 'click',
         },
         // 3. 用户须知 -> 勾选「我已阅读并同意」
@@ -98,54 +104,9 @@ export default defineGkdApp({
           matches: '[text="确认"][visibleToUser=true]',
           action: 'click',
         },
-        // 7. 上报位置 -> 点击「重新选择」
-        {
-          key: 107,
-          name: '上报位置-点击重新选择',
-          order: 107,
-          actionMaximum: 1,
-          resetMatch: 'app',
-          matchRoot: true,
-          matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
-          actionDelay: 200,
-          matches: '[text="重新选择"][visibleToUser=true]',
-          action: 'click',
-        },
-        // 8. 定位搜索 ->（用户手动输入「元熙樾府」后）点击第一条结果
-        //    以结果唯一文案「石家街地铁站」锚定第一条，避免点错「北门/营销中心」等
-        {
-          key: 108,
-          name: '定位搜索-点击第一条结果',
-          order: 108,
-          actionMaximum: 1,
-          resetMatch: 'app',
-          matchRoot: true,
-          matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
-          actionDelay: 200,
-          matches: '[text*="石家街地铁站"][visibleToUser=true]',
-          action: 'click',
-        },
-        // 9. 定位搜索 -> 点击「完成」
-        //    ⚠️ 与相机预览的「完成」同名，需在真机按快照进一步用 activityIds / 结构区分
-        {
-          key: 109,
-          name: '定位搜索-点击完成',
-          order: 109,
-          actionMaximum: 1,
-          resetMatch: 'app',
-          matchRoot: true,
-          matchDelay: 300,
-          matchTime: 6000,
-          forcedTime: 4000,
-          actionDelay: 200,
-          matches: '[text="完成"][visibleToUser=true]',
-          action: 'click',
-        },
-        // 10. 拍照 -> 自动点击「上传照片」（第 2/3 张；第 1 张由用户手动点）
+        // 7. 定位选点（重新选择→搜索→选第一条→完成）已按方案 A 交由用户手动，此处不再自动，
+        //    原因：搜索词为文本输入、结果 text 动态，且定位「完成」与相机「完成」同名易误触。
+        // 8. 拍照 -> 自动点击「上传照片」（第 2/3 张；第 1 张由用户手动点）
         //     preKeys:[111] 表示须先完成一次相机「完成」才自动拉起第 2/3 张，避免抢在用户前触发
         {
           key: 110,
@@ -162,8 +123,8 @@ export default defineGkdApp({
           matches: '[text="上传照片"][visibleToUser=true]',
           action: 'click',
         },
-        // 11. 相机预览 -> 点击「完成」
-        //     ⚠️ 需在真机确认仅在相机预览界面触发；与定位页「完成」同名，建议按 activityIds 区分
+        // 9. 相机预览 -> 点击「完成」
+        //     相机「完成」与文案可能同名，需在真机确认仅在相机预览界面触发；必要时用结构/activityIds 收敛。
         {
           key: 111,
           name: '相机预览-点击完成',
