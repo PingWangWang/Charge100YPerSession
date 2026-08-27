@@ -79,19 +79,28 @@ export default defineGkdApp({
         // 4. 用户须知 -> 点击「开始上报」（需先勾选）
         //    [修改] 「开始上报」为 webview 合成的 clickable Button，与交通违法卡片同类，
         //    用 clickCenter（坐标模拟触摸）而非 click，否则勾选后点它不触发跳转。
+        //    [修复] 原配置会在「开始上报」仍置灰时提前点击，导致第四步卡死：
+        //    preKeys:[103] 只约束顺序、不保证 103 的点击效果已生效；原 matches 只看 visibleToUser
+        //    不看是否启用，置灰按钮仍满足匹配；actionDelay:200 去抖盖不住 webview 重渲染延迟；
+        //    且 actionMaximum:1 让一次落空点击永久消耗配额。故采用"延迟+重试"（A+C）方案：
+        //    1) actionDelay 200→800，等待 webview 勾选后解锁按钮的渲染耗时（主修复，直接覆盖时序）；
+        //    2) actionMaximum 1→5，即便前几次点击落在置灰态也留足重试余量（forcedTime:12000 窗口内可多次尝试）。
+        //    [注意] GKD 选择器不支持 enabled 属性（已用 check 验证报 Unknown Identifier），
+        //    且 webview 禁用按钮多仍上报 clickable=true，故无法用选择器直接判定"按钮已启用"。
+        //    若实测仍偶发卡在用户须知，请提供该页 GKD 无障碍快照，确认禁用态是否有可靠标记再做结构锚定。
         {
           key: 104,
           name: '用户须知-点击开始上报',
           order: 104,
           preKeys: [103],
-          actionMaximum: 1,
+          actionMaximum: 5,
           resetMatch: 'match',
           matchRoot: true,
           activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
           matchTime: 15000,
           forcedTime: 12000,
-          actionDelay: 200,
+          actionDelay: 800,
           matches: '[text="开始上报"][visibleToUser=true]',
           action: 'clickCenter',
         },
