@@ -132,22 +132,31 @@ export default defineGkdApp({
         // 7. 定位选点（重新选择→搜索→选第一条→完成）已按方案 A 交由用户手动，此处不再自动，
         //    原因：搜索词为文本输入、结果 text 动态，且定位「完成」与相机「完成」同名易误触。
         // 8. 拍照引导 -> 点击「拍照」
-        //    [修改] 填写违法信息页有 3 个「上传照片」按钮，用户点击任一个后，小程序会弹出「请拍摄侧前方」二次确认界面，
+        //    填写违法信息页有 3 个「上传照片」按钮，用户点击任一个后，小程序会弹出二次确认界面，
         //    需点击其中的「拍照」按钮才真正调起相机。此规则自动点击「拍照」，3 个上传照片各自弹出的二次确认界面都要点。
+        //    注意：二次确认界面的提示语随拍摄方向变化（「请拍摄侧前方」「请拍摄侧后方」「请拍摄左方」等），
+        //    不可写死具体方向；将来若做结构锚定，只能用「请拍摄」前缀做模糊匹配。
         //    相机内的拍照、预览「完成」、以及后续自动上传照片均交由用户手动，故不再自动点「完成」或第 2/3 张上传照片。
-        //    [修改] 二次确认界面为 webview 内的弹层，其「拍照」出现不触发无障碍事件，resetMatch:'match' 无法唤醒
-        //    已因 matchTime 休眠的规则。故去掉 matchTime，让规则在填写信息页内保持常驻匹配；用户点「上传照片」派发
-        //    事件后由 forcedTime 主动查询捕捉延迟渲染的「拍照」。actionMaximum:5 覆盖 3 张照片及重拍余量。
+        //    二次确认界面为 webview 内的弹层，其「拍照」出现不触发无障碍事件，resetMatch:'match' 无法唤醒
+        //    已因 matchTime 休眠的规则。故不设 matchTime，让规则在填写信息页内保持常驻匹配；用户点「上传照片」
+        //    派发事件后由 forcedTime 主动查询捕捉延迟渲染的「拍照」。
+        //    [修复] 第 3 张照片上传完成后规则仍会再次点击第三张照片位置、导致第三张永远无法定格：
+        //    弹层关闭后 webview 虚拟节点残留（visibleToUser 误报 true），forcedTime:12000 的主动轮询窗口
+        //    越过相机往返时长，回到填写信息页时残留的「拍照」节点被再次命中，clickCenter 按其旧坐标点击，
+        //    落点恰为第三张照片位置，重新拉起拍摄流程形成死循环；且 resetMatch:'match' 在节点每次消失又
+        //    出现时清零 actionMaximum 计数，旧配置 actionMaximum:5 的「重拍余量」为多余点击提供配额。
+        //    故：1) actionMaximum 收紧为 3，去掉重拍余量；2) forcedTime 由 12s 缩至 6s，使主动轮询窗口
+        //    不越过相机往返时长。若实测仍被误触发，需以弹层提示语「请拍摄」为结构锚点根治（待无障碍快照）。
         {
           key: 112,
           name: '拍照引导-点击拍照',
           order: 112,
-          actionMaximum: 5,
+          actionMaximum: 3,
           resetMatch: 'match',
           matchRoot: true,
           activityIds: ['com.tencent.mm.plugin.appbrand.ui.AppBrandUI00'],
           matchDelay: 300,
-          forcedTime: 12000,
+          forcedTime: 6000,
           actionDelay: 200,
           matches: '[text="拍照"][visibleToUser=true]',
           action: 'clickCenter',
